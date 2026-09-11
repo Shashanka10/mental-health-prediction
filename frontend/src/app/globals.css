@@ -1,0 +1,197 @@
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      rgba(20, 184, 166, 0.06),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 90% 100%,
+      rgba(45, 212, 191, 0.05),
+      transparent 30%
+    ),
+    var(--background);
+
+  color: var(--foreground);
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 24px;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Chrome / Safari track */
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 7px;
+  border-radius: 9999px;
+
+  background: linear-gradient(
+    90deg,
+    #14b8a6 0%,
+    #2dd4bf 100%
+  );
+}
+
+/* Chrome / Safari thumb */
+
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+
+  width: 22px;
+  height: 22px;
+
+  margin-top: -7.5px;
+
+  border-radius: 9999px;
+
+  background: #ffffff;
+  border: 4px solid #0f766e;
+
+  box-shadow:
+    0 2px 6px rgba(15, 118, 110, 0.18),
+    0 0 0 4px rgba(20, 184, 166, 0.08);
+
+  cursor: grab;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.08);
+
+  box-shadow:
+    0 4px 10px rgba(15, 118, 110, 0.2),
+    0 0 0 6px rgba(20, 184, 166, 0.1);
+}
+
+input[type="range"]::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  transform: scale(1.12);
+}
+
+/* Firefox track */
+
+input[type="range"]::-moz-range-track {
+  height: 7px;
+  border-radius: 9999px;
+  background: #ccfbf1;
+}
+
+/* Firefox filled portion */
+
+input[type="range"]::-moz-range-progress {
+  height: 7px;
+  border-radius: 9999px;
+  background: #14b8a6;
+}
+
+/* Firefox thumb */
+
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+
+  border-radius: 9999px;
+
+  background: #ffffff;
+  border: 4px solid #0f766e;
+
+  box-shadow:
+    0 2px 6px rgba(15, 118, 110, 0.18),
+    0 0 0 4px rgba(20, 184, 166, 0.08);
+
+  cursor: grab;
+}
+
+::selection {
+  background: #99f6e4;
+  color: #134e4a;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #14b8a6;
+  outline-offset: 3px;
+}
+
+
+button,
+input,
+select {
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
+}
+
+input[type="radio"] {
+  accent-color: #0f766e;
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f8fafc;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+  border: 2px solid #f8fafc;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+
+button,
+label,
+input[type="range"],
+input[type="radio"] {
+  -webkit-tap-highlight-color: transparent;
+}
