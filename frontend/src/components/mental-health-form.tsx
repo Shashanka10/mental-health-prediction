@@ -125,7 +125,11 @@ const stepFields: Record<number, Path<AssessmentFormData>[]> = {
   ],
 };
 
-export default function MentalHealthForm() {
+export default function MentalHealthForm({
+  onResultChange,
+}: {
+  onResultChange?: (hasResult: boolean) => void;
+}) {
   const [step, setStep] = useState(1);
   const [score, setScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -143,9 +147,22 @@ export default function MentalHealthForm() {
     mode: "onChange",
   });
 
+  // Warm up the backend (Render free tier cold start)
+  useEffect(() => {
+    fetch(process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000", {
+      method: "GET",
+    }).catch(() => {});
+  }, []);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
+
+  useEffect(() => {
+    if (score !== null) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [score]);
 
   async function nextStep() {
     setApiError("");
@@ -166,6 +183,7 @@ export default function MentalHealthForm() {
     try {
       const response = await predictMentalHealth(data);
       setScore(response.predicted_mental_health_score);
+      onResultChange?.(true);
     } catch (err) {
       setApiError(
         err instanceof Error
@@ -182,6 +200,7 @@ export default function MentalHealthForm() {
     setStep(1);
     setScore(null);
     setApiError("");
+    onResultChange?.(false);
   }
 
   if (score !== null) {
@@ -190,14 +209,14 @@ export default function MentalHealthForm() {
 
   return (
     <div className="w-full">
-      <div className="mb-8">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="text-xs flex items-center gap-1 font-semibold uppercase tracking-[0.12em] text-slate-500">
-            <span className="mr-1 animate-pulse text-3xl text-teal-600">•</span>
+      <div className="mb-6 sm:mb-8">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <span className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.1em] text-slate-500 sm:text-xs sm:tracking-[0.12em]">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-teal-600" />
             Assessment progress
           </span>
 
-          <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold text-teal-700">
+          <span className="shrink-0 rounded-full bg-teal-50 px-2.5 py-1 text-[11px] font-semibold text-teal-700 sm:px-3 sm:text-xs">
             Step {step} of 3
           </span>
         </div>
@@ -222,8 +241,8 @@ export default function MentalHealthForm() {
                 description="A few basic details help the model understand your context."
               />
 
-              <div className="space-y-7">
-                <div className="grid gap-6 sm:grid-cols-2">
+              <div className="space-y-5 sm:space-y-7">
+                <div className="grid gap-5 sm:grid-cols-2 sm:gap-6">
                   <Controller
                     control={control}
                     name="age"
@@ -277,14 +296,14 @@ export default function MentalHealthForm() {
                     control={control}
                     name="gender"
                     render={({ field }) => (
-                      <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="grid grid-cols-2 gap-3">
                         {(["Male", "Female"] as const).map((gender) => {
                           const selected = field.value === gender;
 
                           return (
                             <label
                               key={gender}
-                              className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-4 transition-all ${
+                              className={`flex cursor-pointer items-center gap-3 rounded-2xl border p-3.5 transition-all sm:p-4 ${
                                 selected
                                   ? "border-teal-500 bg-teal-50/70 ring-4 ring-teal-500/10"
                                   : "border-slate-200 bg-slate-50/40 hover:border-slate-300 hover:bg-white"
@@ -325,7 +344,7 @@ export default function MentalHealthForm() {
                     control={control}
                     name="academic_level"
                     render={({ field }) => (
-                      <div className="grid gap-3 sm:grid-cols-3">
+                      <div className="grid gap-3 md:grid-cols-3">
                         {(
                           ["Undergraduate", "Graduate", "High School"] as const
                         ).map((level, index) => (
@@ -371,7 +390,7 @@ export default function MentalHealthForm() {
                 description="Tell us how you typically use social media and your phone."
               />
 
-              <div className="space-y-7">
+              <div className="space-y-5 sm:space-y-7">
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -493,7 +512,7 @@ export default function MentalHealthForm() {
                 description="These everyday factors help complete your assessment."
               />
 
-              <div className="space-y-7">
+              <div className="space-y-5 sm:space-y-7">
                 <motion.div
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -611,7 +630,7 @@ export default function MentalHealthForm() {
               initial={{ opacity: 0, height: 0, y: -10 }}
               animate={{ opacity: 1, height: "auto", y: 0 }}
               exit={{ opacity: 0, height: 0, y: -10 }}
-              className="mt-7 flex items-start gap-3 overflow-hidden rounded-2xl border border-red-200 bg-red-50 p-4 text-sm text-red-700"
+              className="mt-6 flex items-start gap-3 overflow-hidden rounded-2xl border border-red-200 bg-red-50 p-3.5 text-[13px] text-red-700 sm:mt-7 sm:p-4 sm:text-sm"
             >
               <AlertCircle size={19} className="mt-0.5 shrink-0 text-red-500" />
               <p className="leading-6">{apiError}</p>
@@ -621,7 +640,7 @@ export default function MentalHealthForm() {
 
         <motion.div
           layout
-          className="mt-10 flex items-center justify-between gap-4 border-t border-slate-100 pt-6"
+          className="mt-8 flex items-center justify-between gap-3 border-t border-slate-100 pt-5 sm:mt-10 sm:gap-4 sm:pt-6"
         >
           {step > 1 ? (
             <motion.button
@@ -629,7 +648,7 @@ export default function MentalHealthForm() {
               onClick={previousStep}
               whileHover={{ x: -3 }}
               whileTap={{ scale: 0.97 }}
-              className="group flex items-center cursor-pointer gap-2 rounded-xl bg-slate-200 px-6 py-3 text-sm font-semibold text-black transition hover:bg-slate-300"
+              className="group flex cursor-pointer items-center gap-2 rounded-xl bg-slate-200 px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-slate-300 sm:px-6 sm:py-3"
             >
               <ArrowLeft
                 size={18}
@@ -650,7 +669,7 @@ export default function MentalHealthForm() {
               }}
               whileHover={{ scale: 1.02, x: 2 }}
               whileTap={{ scale: 0.97 }}
-              className="group flex items-center cursor-pointer gap-2 rounded-xl bg-teal-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-700/15 transition hover:bg-teal-800"
+              className="group flex cursor-pointer items-center gap-2 rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-teal-700/15 transition hover:bg-teal-800 sm:px-6 sm:py-3"
             >
               Next
               <ArrowRight
@@ -664,7 +683,7 @@ export default function MentalHealthForm() {
               disabled={loading}
               whileHover={!loading ? { scale: 1.02 } : {}}
               whileTap={!loading ? { scale: 0.97 } : {}}
-              className="group flex min-w-[180px] cursor-pointer items-center justify-center gap-2 rounded-xl bg-teal-700 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-700/15 transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-60"
+              className="group flex min-w-[150px] cursor-pointer items-center justify-center gap-2 rounded-xl bg-teal-700 px-4 py-2.5 text-sm font-semibold text-white shadow-lg shadow-teal-700/15 transition hover:bg-teal-800 disabled:cursor-not-allowed disabled:opacity-60 sm:min-w-[180px] sm:px-6 sm:py-3"
             >
               {loading ? (
                 <>
@@ -697,7 +716,6 @@ export default function MentalHealthForm() {
 }
 
 function SectionHeader({
-  icon,
   eyebrow,
   title,
   description,
@@ -709,23 +727,23 @@ function SectionHeader({
 }) {
   return (
     <motion.div
-      className="mb-9"
+      className="mb-6 sm:mb-9"
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
     >
-      <div className="mb-4 flex items-center gap-3">
-        <div className="h-px w-8 bg-teal-200" />
-        <span className="text-xs font-bold uppercase tracking-[0.18em] text-teal-600">
+      <div className="mb-3 flex items-center gap-3 sm:mb-4">
+        <div className="h-px w-6 bg-teal-200 sm:w-8" />
+        <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-teal-600 sm:text-xs sm:tracking-[0.18em]">
           {eyebrow}
         </span>
       </div>
 
-      <h2 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+      <h2 className="text-xl font-bold leading-tight tracking-tight text-slate-900 sm:text-2xl lg:text-3xl">
         {title}
       </h2>
 
-      <p className="mt-2 max-w-xl text-sm leading-6 text-slate-500">
+      <p className="mt-1.5 max-w-xl text-[13px] leading-5 text-slate-500 sm:mt-2 sm:text-sm sm:leading-6">
         {description}
       </p>
     </motion.div>
@@ -734,7 +752,7 @@ function SectionHeader({
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <label className="mb-3 block text-sm font-semibold text-slate-700">
+    <label className="mb-2 block text-[13px] font-semibold text-slate-700 sm:mb-3 sm:text-sm">
       {children}
     </label>
   );
@@ -765,6 +783,7 @@ function InputField({
     >
       <FieldLabel>{label}</FieldLabel>
 
+      {/* text-base keeps iOS Safari from zooming on focus */}
       <motion.input
         whileFocus={{ scale: 1.01 }}
         type={type}
@@ -772,7 +791,7 @@ function InputField({
         min={min}
         max={max}
         onChange={(event) => onChange(event.target.value)}
-        className={`h-14 w-full rounded-2xl border bg-slate-50/40 px-4 text-slate-900 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:bg-white focus:ring-4 ${
+        className={`h-12 w-full rounded-2xl border bg-slate-50/40 px-4 text-base text-slate-900 outline-none transition placeholder:text-slate-400 hover:border-slate-300 focus:bg-white focus:ring-4 sm:h-14 ${
           error
             ? "border-red-300 focus:border-red-400 focus:ring-red-500/10"
             : "border-slate-200 focus:border-teal-500 focus:ring-teal-500/10"
@@ -802,7 +821,7 @@ function SelectField({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-14 w-full cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-slate-50/40 px-4 pr-12 text-slate-900 outline-none transition hover:border-slate-300 focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/10"
+        className="h-12 w-full cursor-pointer appearance-none rounded-2xl border border-slate-200 bg-slate-50/40 px-4 pr-12 text-base text-slate-900 outline-none transition hover:border-slate-300 focus:border-teal-500 focus:bg-white focus:ring-4 focus:ring-teal-500/10 sm:h-14"
       >
         <option value="" disabled>
           {placeholder}
@@ -841,17 +860,19 @@ function PlatformSelect({
         type="button"
         whileTap={{ scale: 0.995 }}
         onClick={() => setOpen((previous) => !previous)}
-        className={`flex h-14 cursor-pointer w-full items-center justify-between rounded-2xl border bg-slate-50/40 px-4 text-left outline-none transition ${
+        className={`flex h-12 w-full cursor-pointer items-center justify-between rounded-2xl border bg-slate-50/40 px-3 text-left outline-none transition sm:h-14 sm:px-4 ${
           open
             ? "border-teal-500 bg-white ring-4 ring-teal-500/10"
             : "border-slate-200 hover:border-slate-300"
         }`}
       >
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-600">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-600 sm:h-9 sm:w-9">
             {selectedIcon}
           </div>
-          <span className="truncate font-medium text-slate-800">{value}</span>
+          <span className="truncate text-sm font-medium text-slate-800 sm:text-base">
+            {value}
+          </span>
         </div>
 
         <motion.div
@@ -871,7 +892,7 @@ function PlatformSelect({
             transition={{ duration: 0.2 }}
             className="absolute left-0 right-0 z-50 mt-2 overflow-hidden rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-200/60"
           >
-            <div className="max-h-80 overflow-y-auto">
+            <div className="max-h-64 overflow-y-auto sm:max-h-80">
               {options.map((platform, index) => {
                 const selected = value === platform;
 
@@ -886,14 +907,14 @@ function PlatformSelect({
                       onChange(platform);
                       setOpen(false);
                     }}
-                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition ${
+                    className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left transition sm:py-3 ${
                       selected
                         ? "bg-teal-50 text-teal-700"
                         : "text-slate-700 hover:bg-slate-50"
                     }`}
                   >
                     <div
-                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg sm:h-9 sm:w-9 ${
                         selected
                           ? "bg-teal-600 text-white"
                           : "bg-slate-100 text-slate-500"
@@ -945,24 +966,26 @@ function SliderField({
     <motion.div
       whileHover={{ y: -2 }}
       transition={{ duration: 0.2 }}
-      className="rounded-2xl border border-slate-200 bg-slate-50/30 p-5 transition-colors hover:border-slate-300 hover:bg-white"
+      className="rounded-2xl border border-slate-200 bg-slate-50/30 p-4 transition-colors hover:border-slate-300 hover:bg-white sm:p-5"
     >
-      <div className="mb-5 flex items-center justify-between gap-4">
-        <div className="flex min-w-0 items-center gap-3">
+      <div className="mb-4 flex items-center justify-between gap-3 sm:mb-5 sm:gap-4">
+        <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
           <motion.div
             whileHover={{ rotate: 5, scale: 1.05 }}
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-600"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-teal-600 sm:h-10 sm:w-10"
           >
             {icon}
           </motion.div>
-          <span className="text-sm font-semibold text-slate-700">{label}</span>
+          <span className="text-[13px] font-semibold leading-snug text-slate-700 sm:text-sm">
+            {label}
+          </span>
         </div>
 
         <motion.div
           key={value}
           initial={{ scale: 0.85, opacity: 0.5 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="whitespace-nowrap rounded-xl bg-teal-50 px-3 py-2 text-sm font-bold text-teal-700"
+          className="shrink-0 whitespace-nowrap rounded-xl bg-teal-50 px-2.5 py-1.5 text-xs font-bold text-teal-700 sm:px-3 sm:py-2 sm:text-sm"
         >
           {value} {suffix}
         </motion.div>
@@ -988,7 +1011,7 @@ function SliderField({
         />
       </div>
 
-      <div className="mt-2 flex justify-between text-xs font-medium text-slate-400">
+      <div className="mt-2 flex justify-between text-[11px] font-medium text-slate-400 sm:text-xs">
         <span>{min}</span>
         <span>{max}</span>
       </div>

@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 
 import { motion } from "framer-motion";
 import { Brain, ShieldCheck, Activity, BrainCircuit } from "lucide-react";
@@ -6,6 +7,8 @@ import { Brain, ShieldCheck, Activity, BrainCircuit } from "lucide-react";
 import MentalHealthForm from "@/components/mental-health-form";
 
 export default function Home() {
+  const [showResult, setShowResult] = useState(false);
+
   return (
     <main className="min-h-screen overflow-hidden bg-gradient-to-b from-teal-50/80 via-white to-teal-50/70">
       {/* Background decoration */}
@@ -146,127 +149,129 @@ export default function Home() {
       </motion.header>
 
       {/* Hero */}
-      <section className="relative z-10 pt-20">
-        <div className="mx-auto max-w-7xl px-5 pb-10 pt-12 sm:px-8 sm:pt-16">
-          <div className="max-w-5xl">
-            <motion.h1
-              initial={{
-                opacity: 0,
-                y: 25,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                delay: 0.25,
-                duration: 0.6,
-                ease: "easeOut",
-              }}
-              className="text-4xl font-bold leading-[1.08] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl"
-            >
-              Understand your{" "}
-              <motion.span
+      {!showResult && (
+        <section className="relative z-10 pt-20">
+          <div className="mx-auto max-w-7xl px-5 pb-10 pt-12 sm:px-8 sm:pt-16">
+            <div className="max-w-5xl">
+              <motion.h1
                 initial={{
                   opacity: 0,
+                  y: 25,
                 }}
                 animate={{
                   opacity: 1,
+                  y: 0,
                 }}
                 transition={{
-                  delay: 0.6,
+                  delay: 0.25,
+                  duration: 0.6,
+                  ease: "easeOut",
+                }}
+                className="text-3xl font-bold leading-[1.08] tracking-tight text-slate-900 sm:text-5xl lg:text-6xl"
+              >
+                Understand your{" "}
+                <motion.span
+                  initial={{
+                    opacity: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                  }}
+                  transition={{
+                    delay: 0.6,
+                    duration: 0.5,
+                  }}
+                  className="text-teal-700"
+                >
+                  digital wellness.
+                </motion.span>
+              </motion.h1>
+
+              <motion.p
+                initial={{
+                  opacity: 0,
+                  y: 20,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  delay: 0.4,
                   duration: 0.5,
                 }}
-                className="text-teal-700"
+                className="mt-5 max-w-5xl text-sm leading-7 text-slate-500 sm:text-base md:text-lg"
               >
-                digital wellness.
-              </motion.span>
-            </motion.h1>
+                Answer a few questions about your digital habits, lifestyle, and
+                academic routine. Our machine-learning model will use your
+                responses to predict a{" "}
+                <span className="font-semibold text-teal-700">
+                  mental health score.
+                </span>
+              </motion.p>
 
-            <motion.p
-              initial={{
-                opacity: 0,
-                y: 20,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                delay: 0.4,
-                duration: 0.5,
-              }}
-              className="mt-5 max-w-5xl text-base leading-7 text-slate-500 sm:text-lg"
-            >
-              Answer a few questions about your digital habits, lifestyle, and
-              academic routine. Our machine-learning model will use your
-              responses to predict a{" "}
-              <span className="font-semibold text-teal-700">
-                mental health score.
-              </span>
-            </motion.p>
+              {/* Information badges */}
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  y: 15,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                transition={{
+                  delay: 0.55,
+                  duration: 0.45,
+                  ease: "easeOut",
+                }}
+                className="mt-5 sm:mt-7 flex flex-row flex-wrap items-center gap-2 md:gap-3"
+              >
+                <InfoBadge
+                  icon={<ShieldCheck size={15} />}
+                  text="Your responses stay private"
+                  variant="teal"
+                  delay={0}
+                />
 
-            {/* Information badges */}
-            <motion.div
-              initial={{
-                opacity: 0,
-                y: 15,
-              }}
-              animate={{
-                opacity: 1,
-                y: 0,
-              }}
-              transition={{
-                delay: 0.55,
-                duration: 0.45,
-                ease: "easeOut",
-              }}
-              className="mt-7 flex flex-row flex-wrap items-center gap-2 md:gap-3"
-            >
-              <InfoBadge
-                icon={<ShieldCheck size={15} />}
-                text="Your responses stay private"
-                variant="teal"
-                delay={0}
+                <InfoBadge
+                  icon={<Activity size={15} />}
+                  text="Data-driven prediction"
+                  variant="blue"
+                  delay={0.08}
+                />
+
+                <InfoBadge
+                  icon={<Brain size={15} />}
+                  text="Not a medical diagnosis"
+                  variant="violet"
+                  delay={0.16}
+                />
+              </motion.div>
+
+              {/* Accent line */}
+              <motion.div
+                initial={{
+                  width: 0,
+                  opacity: 0,
+                }}
+                animate={{
+                  width: "80px",
+                  opacity: 1,
+                }}
+                transition={{
+                  delay: 0.85,
+                  duration: 0.5,
+                }}
+                className="mt-7 h-1 rounded-full bg-gradient-to-r from-teal-600 to-teal-400"
               />
-
-              <InfoBadge
-                icon={<Activity size={15} />}
-                text="Data-driven prediction"
-                variant="blue"
-                delay={0.08}
-              />
-
-              <InfoBadge
-                icon={<Brain size={15} />}
-                text="Not a medical diagnosis"
-                variant="violet"
-                delay={0.16}
-              />
-            </motion.div>
-
-            {/* Accent line */}
-            <motion.div
-              initial={{
-                width: 0,
-                opacity: 0,
-              }}
-              animate={{
-                width: "80px",
-                opacity: 1,
-              }}
-              transition={{
-                delay: 0.85,
-                duration: 0.5,
-              }}
-              className="mt-7 h-1 rounded-full bg-gradient-to-r from-teal-600 to-teal-400"
-            />
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Assessment */}
-      <section className="relative z-10 pb-20">
+      <section className={`relative z-10 ${showResult ? "pt-28" : ""}`}>
         <div className="mx-auto max-w-5xl px-5 sm:px-8">
           <motion.div
             initial={{
@@ -286,7 +291,7 @@ export default function Home() {
             }}
             className="rounded-[2rem] border border-slate-200/80 bg-white/95 p-5 shadow-2xl shadow-slate-200/50 backdrop-blur-sm sm:p-8 lg:p-10"
           >
-            <MentalHealthForm />
+            <MentalHealthForm onResultChange={setShowResult} />
           </motion.div>
         </div>
       </section>
