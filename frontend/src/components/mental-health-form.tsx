@@ -134,6 +134,19 @@ export default function MentalHealthForm({
   const [score, setScore] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState("");
+  const [slow, setSlow] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      setSlow(false);
+      return;
+    }
+    const timer = setTimeout(() => {
+      setSlow(true);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   const {
     control,
@@ -638,6 +651,34 @@ export default function MentalHealthForm({
           )}
         </AnimatePresence>
 
+        <AnimatePresence>
+          {loading && slow && (
+            <motion.div
+              initial={{ opacity: 0, height: 0, y: -8 }}
+              animate={{ opacity: 1, height: "auto", y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -8 }}
+              transition={{ duration: 0.25 }}
+              className="mt-5 overflow-hidden"
+            >
+              <div className="flex items-start gap-3 rounded-2xl border border-teal-200/80 bg-teal-50/70 p-3.5 sm:items-center sm:p-4">
+                <motion.span
+                  animate={{ rotate: 360 }}
+                  transition={{
+                    duration: 1.2,
+                    repeat: Infinity,
+                    ease: "linear",
+                  }}
+                  className="mt-0.5 h-4 w-4 shrink-0 rounded-full border-2 border-teal-300 border-t-teal-600 sm:mt-0"
+                />
+                <p className="text-xs leading-5 text-teal-800 sm:text-[13px]">
+                  Our server was idle and is starting up. This can take up to a
+                  minute the first time. Thanks for your patience.
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <motion.div
           layout
           className="mt-8 flex items-center justify-between gap-3 border-t border-slate-100 pt-5 sm:mt-10 sm:gap-4 sm:pt-6"
@@ -696,7 +737,7 @@ export default function MentalHealthForm({
                     }}
                     className="h-5 w-5 rounded-full border-2 border-white/30 border-t-white"
                   />
-                  Analyzing...
+                  {slow ? "Waking up server..." : "Predicting..."}
                 </>
               ) : (
                 <>
